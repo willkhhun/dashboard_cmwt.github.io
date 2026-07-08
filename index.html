@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>潮鸣外滩数字营销看板</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">CM</div>
+          <div>
+            <small>MARKETING OS</small>
+            <strong>潮鸣外滩</strong>
+            <span>数字营销看板</span>
+          </div>
+        </div>
+        <nav class="nav-tabs" aria-label="主导航">
+          <button class="nav-tab active" data-view="overview">总览</button>
+          <button class="nav-tab" data-view="live">直播排班</button>
+          <button class="nav-tab" data-view="leads">直播线索跟进</button>
+          <button class="nav-tab" data-view="ops">运营日常工作</button>
+          <button class="nav-tab" data-view="review">周复盘</button>
+        </nav>
+        <div class="side-action-menu">
+          <span>任务菜单</span>
+          <button class="side-primary" id="openQuickAdd">新增线索</button>
+          <button id="addHostAction">添加主播</button>
+          <button data-open-form="schedule">添加排班</button>
+          <button id="addOpsTaskAction">添加运营任务</button>
+          <button id="addReviewAction">添加复盘动作</button>
+          <button id="resetDemo">恢复示例数据</button>
+        </div>
+        <div class="sync-status" id="syncStatus">本机模式</div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">上海绿城潮鸣外滩</p>
+            <h1 id="pageTitle">数字营销日常精细化看板</h1>
+          </div>
+        </header>
+
+        <section class="view active" id="overviewView">
+          <section class="monthly-progress-panel">
+            <div class="monthly-progress-head">
+              <div>
+                <p class="eyebrow">MONTHLY TARGET</p>
+                <h2>本月指标进度</h2>
+              </div>
+              <span id="monthlyProgressMonth"></span>
+            </div>
+            <div class="monthly-progress-grid" id="monthlyProgressGrid"></div>
+          </section>
+
+          <div class="overview-grid">
+            <section class="personal-progress-panel">
+              <div class="personal-progress-head">
+                <div>
+                  <p class="eyebrow">ANCHOR MONTHLY TARGET</p>
+                  <h2>个人本月指标进度</h2>
+                </div>
+                <span>按主播姓名卡管理</span>
+              </div>
+              <div class="personal-progress-grid" id="personalMonthlyProgressGrid"></div>
+            </section>
+
+            <section class="metric-row" id="metricRow"></section>
+          </div>
+
+          <section class="split-layout">
+            <div class="panel">
+              <div class="panel-head">
+                <h2>今日直播</h2>
+                <span id="todayDate"></span>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>主播</th>
+                      <th>时间</th>
+                      <th>主题</th>
+                      <th>状态</th>
+                      <th>有效线索</th>
+                    </tr>
+                  </thead>
+                  <tbody id="todayLiveRows"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <h2>风险提醒</h2>
+                <span>自动汇总</span>
+              </div>
+              <div class="risk-list" id="riskList"></div>
+            </div>
+          </section>
+        </section>
+
+        <section class="view" id="liveView">
+          <section class="panel schedule-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">排期日历</p>
+                <h2>直播排班</h2>
+              </div>
+            </div>
+            <div class="schedule-hosts" id="scheduleHosts"></div>
+            <div class="schedule-tip">拖主播到格子新建直播；拖到直播卡加入双人；拖直播卡调单场。</div>
+            <div class="schedule-legend" id="scheduleLegend"></div>
+            <div class="timeline-scroll">
+              <div class="timeline-board" id="scheduleBoard"></div>
+            </div>
+          </section>
+        </section>
+
+        <section class="view" id="leadsView">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">线索质量与转化</p>
+                <h2>直播线索跟进</h2>
+              </div>
+              <div class="panel-actions">
+                <button class="ghost-btn" id="toggleLeadMetrics" type="button">收起数据</button>
+                <button class="primary-btn" id="addLeadInPool" type="button">新增线索</button>
+              </div>
+            </div>
+            <div class="lead-metrics" id="leadMetricRow"></div>
+            <div class="lead-alerts" id="leadAlerts"></div>
+            <div class="lead-toolbar">
+              <input id="leadDateFilter" type="date" />
+              <select id="leadHostFilter"><option value="全部">全部主播</option></select>
+              <select id="leadPlatformFilter"><option value="全部">全部平台</option></select>
+              <select id="leadPropertyFilter"><option value="全部">全部户型</option></select>
+              <input id="leadSearch" type="search" placeholder="搜索客户、主播、需求" />
+              <select id="leadFilter">
+                <option value="全部">全部状态</option>
+                <option value="新线索">新线索</option>
+                <option value="已加微信">已加微信</option>
+                <option value="已邀约">已邀约</option>
+                <option value="已到场">已到场</option>
+                <option value="已成交">已成交</option>
+                <option value="无效">无效</option>
+              </select>
+            </div>
+            <div class="table-wrap">
+              <table class="lead-table">
+                <thead>
+                  <tr>
+                    <th>客户姓名</th>
+                    <th>客户电话</th>
+                    <th>跟进人</th>
+                    <th>微信</th>
+                    <th>来源平台</th>
+                    <th>意向户型</th>
+                    <th>线索状态</th>
+                    <th>所属主播</th>
+                    <th>到访时间</th>
+                    <th>备注</th>
+                  </tr>
+                </thead>
+                <tbody id="leadRows"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <section class="view" id="opsView">
+          <section class="panel ops-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">OPERATION TASK CALENDAR</p>
+                <h2>运营日常工作</h2>
+              </div>
+              <button class="primary-btn" id="addOpsTaskTop" type="button">新增任务</button>
+            </div>
+            <section class="ops-focus">
+              <div class="ops-section-head">
+                <div>
+                  <h3>本周重点工作 <span id="opsFocusRange">以周为单位记录</span></h3>
+                  <span>名称 / DDL / 完成情况</span>
+                </div>
+                <div class="ops-focus-actions">
+                  <button class="ghost-btn" id="opsFocusPrev" type="button">上一周</button>
+                  <button class="ghost-btn" id="opsFocusThis" type="button">本周</button>
+                  <button class="ghost-btn" id="opsFocusNext" type="button">下一周</button>
+                </div>
+              </div>
+              <div class="ops-focus-grid" id="opsFocus"></div>
+            </section>
+            <section class="ops-workspace">
+              <aside class="ops-task-pool">
+                <div class="ops-section-head">
+                  <h3>任务目录</h3>
+                  <span>拖左侧卡移动整条排期</span>
+                </div>
+                <div class="ops-task-axis-spacer">选题 · 可拖动排序</div>
+                <div class="ops-task-list" id="opsTaskPool"></div>
+                <div class="ops-quick-add">
+                  <input id="opsQuickTitle" placeholder="快速输入任务标题" />
+                  <select id="opsQuickSection"></select>
+                  <input id="opsQuickDue" type="date" />
+                  <button class="primary-btn" id="opsQuickAdd" type="button">+ 添加任务</button>
+                </div>
+              </aside>
+              <section class="ops-calendar-panel">
+                <div class="ops-calendar-head">
+                  <div>
+                    <h3 id="opsWeekRange">7月-12月排期</h3>
+                    <span>拖右侧节点只调整该节点；拖 DDL 只调整任务 DDL</span>
+                  </div>
+                  <div class="ops-progress-palette">
+                    <div class="ops-progress-template" draggable="true" data-op-progress-template="true">进度节点</div>
+                    <span>拖入日历添加</span>
+                  </div>
+                </div>
+                <div class="ops-timeline-scroll">
+                  <div class="ops-timeline-board" id="opsCalendar"></div>
+                </div>
+              </section>
+            </section>
+          </section>
+        </section>
+
+        <section class="view" id="reviewView">
+          <section class="panel weekly-review-panel">
+            <div class="weekly-review-head">
+              <div>
+                <p class="eyebrow">WEEKLY REVIEW ARCHIVE</p>
+                <h2 id="weeklyReviewTitle">周复盘</h2>
+                <span id="weeklyReviewMeta">每周独立存档，当前周自动联动直播排班与线索数据</span>
+              </div>
+              <div class="weekly-review-actions">
+                <button class="ghost-btn" id="reviewPrevWeek" type="button">上一周</button>
+                <button class="ghost-btn" id="reviewThisWeek" type="button">本周</button>
+                <button class="ghost-btn" id="reviewNextWeek" type="button">下一周</button>
+                <button class="primary-btn" id="saveWeeklyReview" type="button">保存复盘</button>
+              </div>
+            </div>
+
+            <div class="weekly-review-toolbar">
+              <label>选择周<select id="reviewWeekSelect"></select></label>
+              <label>开始日期<input id="reviewRangeStart" type="date" /></label>
+              <label>结束日期<input id="reviewRangeEnd" type="date" /></label>
+              <button class="ghost-btn" id="reviewRangeSearch" type="button">查询</button>
+            </div>
+            <div class="review-range-results" id="reviewRangeResults"></div>
+
+            <section class="review-block weekly-spend-block">
+              <div class="review-block-head">
+                <h3>本周投放消耗</h3>
+                <span>手动录入，自动汇总</span>
+              </div>
+              <div class="spend-card-grid" id="weeklySpendCards"></div>
+            </section>
+
+            <section class="weekly-metrics" id="weeklyMetrics"></section>
+
+            <section class="review-block broker-visit-block">
+              <div class="review-block-head">
+                <h3>数渠经纪人线索及到访渠道分析</h3>
+                <button class="ghost-btn" id="addBrokerVisitRow" type="button">+ 添加行</button>
+              </div>
+              <div class="review-table-wrap">
+                <table class="broker-visit-table">
+                  <thead>
+                    <tr>
+                      <th rowspan="2">经纪人</th>
+                      <th colspan="6">本周到访</th>
+                      <th rowspan="2"></th>
+                    </tr>
+                    <tr>
+                      <th>直播（抖音+腾讯）</th>
+                      <th>视频号</th>
+                      <th>朋友圈</th>
+                      <th>小红书</th>
+                      <th>线下自拓</th>
+                      <th>合计</th>
+                    </tr>
+                  </thead>
+                  <tbody id="weeklyBrokerVisitRows"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="review-block">
+              <div class="review-block-head">
+                <h3>下周主播重点工作</h3>
+                <span>直播排班实时读取，重点产出可手动编辑</span>
+              </div>
+              <div class="next-week-summary" id="nextWeekSummary"></div>
+            </section>
+
+            <section class="review-block">
+              <div class="review-block-head">
+                <h3>本周复盘总结</h3>
+                <span>保存后作为该周历史记录</span>
+              </div>
+              <div class="review-summary-grid">
+                <label>本周亮点<textarea id="reviewHighlights"></textarea></label>
+                <label>本周问题<textarea id="reviewProblems"></textarea></label>
+                <label>下周优化动作<textarea id="reviewNextActions"></textarea></label>
+                <label>负责人<input id="reviewOwner" placeholder="负责人" /></label>
+                <label>截止时间<input id="reviewDeadline" type="date" /></label>
+              </div>
+            </section>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="quickDialog">
+      <form method="dialog" class="dialog-form" id="quickForm">
+        <div class="dialog-head">
+          <h2 id="dialogTitle">新增事项</h2>
+          <button class="icon-btn" value="cancel" aria-label="关闭">×</button>
+        </div>
+        <div class="form-tabs">
+          <button type="button" class="form-tab active" data-form="lead">线索</button>
+          <button type="button" class="form-tab" data-form="schedule">排班</button>
+          <button type="button" class="form-tab" data-form="task">任务</button>
+        </div>
+
+        <div class="form-pane active" data-pane="lead">
+          <label>客户称呼<input name="customer" placeholder="如 王先生" /></label>
+          <label>来源主播<select name="leadHost"></select></label>
+          <label>客户需求<input name="need" placeholder="预算、户型、关注点" /></label>
+          <label>线索状态<select name="leadStatus"><option>新线索</option><option>已加微信</option><option>已邀约</option><option>已到场</option><option>无效</option></select></label>
+          <label>邀约时间<input name="visitPlan" type="datetime-local" /></label>
+          <label>到场时间<input name="arrivalTime" type="datetime-local" /></label>
+          <label class="full">下一步<input name="nextStep" placeholder="如 7月8日确认到访人数" /></label>
+        </div>
+
+        <div class="form-pane" data-pane="schedule">
+          <label>主播<select name="scheduleHost"></select></label>
+          <label>直播日期<input name="liveDate" type="date" /></label>
+          <label>直播时间<input name="liveTime" placeholder="10:00-12:00" /></label>
+          <label>平台<select name="platform"><option>抖音</option><option>视频号</option><option>小红书</option></select></label>
+          <label>直播主题<input name="topic" placeholder="如 江景改善专场" /></label>
+          <label>状态<select name="liveStatus"><option>未开始</option><option>开播中</option><option>已完成</option><option>异常</option></select></label>
+          <label>线索数<input name="leadCount" type="number" min="0" value="0" /></label>
+          <label>有效线索<input name="validCount" type="number" min="0" value="0" /></label>
+        </div>
+
+        <div class="form-pane" data-pane="task">
+          <label>任务名称<input name="taskTitle" placeholder="如 周三直播脚本确认" /></label>
+          <label>负责人<input name="owner" placeholder="运营/主播姓名" /></label>
+          <label>截止时间<input name="due" type="datetime-local" /></label>
+          <label>优先级<select name="priority"><option>高</option><option>中</option><option>低</option></select></label>
+          <label>状态<select name="taskStatus"><option>待安排</option><option>进行中</option><option>待确认</option><option>已完成</option><option>延期/风险</option></select></label>
+          <label class="full">关联直播/交付物<input name="deliverable" placeholder="如 海报、脚本、短视频、复盘表" /></label>
+        </div>
+
+        <div class="dialog-actions">
+          <button class="ghost-btn" value="cancel">取消</button>
+          <button class="primary-btn" id="saveQuick" value="default">保存</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="leadDetailDialog">
+      <form method="dialog" class="dialog-form" id="leadDetailForm">
+        <div class="dialog-head">
+          <div>
+            <p class="eyebrow">线索详情</p>
+            <h2 id="leadDetailTitle">编辑线索</h2>
+          </div>
+          <button class="icon-btn" value="cancel" aria-label="关闭">×</button>
+        </div>
+        <input type="hidden" name="leadKey" />
+        <div class="lead-detail-grid">
+          <label>客户姓名<input name="customer" placeholder="如 王先生" /></label>
+          <label>客户电话<input name="phone" placeholder="手机号" /></label>
+          <label>跟进人<select name="followPerson"></select></label>
+          <label>是否加微信<select name="wechat"><option>否</option><option>是</option></select></label>
+          <label>来源平台<input name="platform" placeholder="如 视频号/抖音" /></label>
+          <label>线索状态<select name="status"></select></label>
+          <label>所属主播<input name="hostsText" placeholder="如 秀俊、嘉莉" /></label>
+          <label>到访时间<input name="arrivalTime" type="datetime-local" /></label>
+          <fieldset class="property-checks">
+            <legend>意向户型</legend>
+            <label><input type="checkbox" name="propertyTypes" value="190" />190</label>
+            <label><input type="checkbox" name="propertyTypes" value="200" />200</label>
+            <label><input type="checkbox" name="propertyTypes" value="285" />285</label>
+            <label><input type="checkbox" name="propertyTypes" value="310" />310</label>
+          </fieldset>
+          <label class="full">备注<textarea name="note" placeholder="客户诉求、跟进动作、现场反馈"></textarea></label>
+        </div>
+        <div class="dialog-actions">
+          <button class="ghost-btn danger-text" type="button" id="deleteLeadDetail">删除线索</button>
+          <button class="ghost-btn" value="cancel">取消</button>
+          <button class="primary-btn" id="saveLeadDetail" value="default">保存线索</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="opsTaskDialog">
+      <form method="dialog" class="dialog-form ops-task-form" id="opsTaskForm">
+        <div class="dialog-head">
+          <div>
+            <p class="eyebrow">运营任务详情</p>
+            <h2 id="opsTaskTitle">编辑任务</h2>
+          </div>
+          <button class="icon-btn" value="cancel" aria-label="关闭">×</button>
+        </div>
+        <input type="hidden" name="taskId" />
+        <div class="ops-detail-grid">
+          <label class="full">任务名称<input name="title" placeholder="任务名称" /></label>
+          <label>任务等级<select name="level"><option>A</option><option>B</option><option>C</option></select></label>
+          <label>负责人<input name="owner" placeholder="运营负责人" /></label>
+          <label>所属板块<select name="section"></select></label>
+          <label>创建时间<input name="createdAt" type="datetime-local" /></label>
+          <label>DDL<input name="due" type="datetime-local" /></label>
+          <label>任务状态<select name="status"></select></label>
+          <label class="full ops-output-field">成果输出<textarea name="output" placeholder="可记录最终交付内容、链接、版本、复盘结论、素材位置等"></textarea></label>
+        </div>
+        <div class="dialog-actions">
+          <button class="ghost-btn danger-text" type="button" id="deleteOpsTask">删除任务</button>
+          <button class="ghost-btn" type="button" id="completeOpsTask">标记完成</button>
+          <button class="ghost-btn" value="cancel">关闭</button>
+          <button class="primary-btn" id="saveOpsTask" value="default">保存</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="recapDialog">
+      <form method="dialog" class="dialog-form" id="recapForm">
+        <div class="dialog-head">
+          <div>
+            <p class="eyebrow">直播复盘</p>
+            <h2 id="recapTitle">线索复盘</h2>
+          </div>
+          <button class="icon-btn" value="cancel" aria-label="关闭">×</button>
+        </div>
+        <input type="hidden" name="scheduleId" />
+        <div class="recap-list" id="recapList"></div>
+        <button class="ghost-btn add-recap-row" type="button" id="addRecapRow">添加线索</button>
+        <div class="dialog-actions">
+          <button class="ghost-btn" value="cancel">取消</button>
+          <button class="primary-btn" id="saveRecap" value="default">保存复盘</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="./cloud-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
